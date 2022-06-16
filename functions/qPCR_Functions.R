@@ -1,5 +1,5 @@
 library(tidyverse)
-
+library(readxl)
 
 # internal utility functions
 get_sample <- function(SampleTarget) { # Separates strings of type 'Sample;Target' to get Sample
@@ -32,8 +32,28 @@ calculate_master_mix <- function( # Uses qPCR map template to calculate master m
     return(MasterMixCalculations)
 }
 
-get_qPCR_results_summary <- function(
+# returns a dataframe of summarised qPCR CTs
+# made for use with JLA qPCR machine (Applied Biosystems something something)
+get_qPCR_results_summary <- function( 
     csv_loc,
+    skip_rows=21,
+    sheet_name = "Results"
     ) {
+    
+    # read in excel file and skip metadata lines, only get results sheet
+    df <- read_excel(csv_loc, sheet=sheet_name, skip=skip_rows)
+    names(df) <- sapply(names(df), sub, pattern=" ", replacement="") # remove spaces
+
+    return(
+        df %>% select("SampleName", "TargetName", "CT") %>% # get relevant columns
+        mutate(CT=as.numeric(CT)) %>% # convert to numeric column instead of char
+        group_by(SampleName, TargetName) %>% # sample/target groups
+        summarise(
+            CTmean=mean(CT),
+            CTstdev=sd(CT)
+        )
+    )
+
+
 
 }
