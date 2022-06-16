@@ -1,0 +1,12 @@
+- Pour gel
+    - 1xTBE
+    - 1% Bleach
+    - 1% Agarose
+- Prepare samples
+    - Use 10x DNA loading buffer
+- Run
+    - 100V
+    - For however long
+
+More detailed protocol:
+PMID: 22222980
